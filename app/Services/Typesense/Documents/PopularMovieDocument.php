@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Typesense\Documents;
 
 use App\Models\Movie;
-use App\Services\Typesense\Data\TypesenseField;
 use App\Services\Typesense\Enums\FieldType;
+use App\Services\Typesense\Data\TypesenseField;
 
-class PopularMovieDocument extends TypesenseDocument
+final class PopularMovieDocument extends TypesenseDocument
 {
     /**
      * Create a new instance.
@@ -41,7 +43,7 @@ class PopularMovieDocument extends TypesenseDocument
                 sort: true,
             ),
             new TypesenseField(
-                name: "release_status",
+                name: 'release_status',
                 type: FieldType::STRING,
                 index: true,
                 facet: true,
@@ -65,7 +67,7 @@ class PopularMovieDocument extends TypesenseDocument
                 facet: true,
             ),
             new TypesenseField(
-                name: "is_rated",
+                name: 'is_rated',
                 type: FieldType::BOOL,
                 index: true,
             ),
@@ -97,15 +99,15 @@ class PopularMovieDocument extends TypesenseDocument
             'description' => $this->movie->description,
             'release_date' => $this->movie->release_date?->timestamp,
             'rating' => $this->movie->rating,
-            'is_rated' => (bool) ($this->movie->rating !== null),
-            'release_status' => (bool) ($this->movie->release_date?->isPast() ?? false) 
-                ? 'Released' 
+            'is_rated' => (bool) (null !== $this->movie->rating),
+            'release_status' => (bool) ($this->movie->release_date?->isPast() ?? false)
+                ? 'Released'
                 : 'Upcoming',
-            'poster_url' => $this->movie->poster_path 
-                ? "https://image.tmdb.org/t/p/w500/{$this->movie->poster_path}" 
+            'poster_url' => $this->movie->poster_path
+                ? "https://image.tmdb.org/t/p/w500/{$this->movie->poster_path}"
                 : null,
             'backdrop_url' => $this->movie->backdrop_path
-                ? "https://image.tmdb.org/t/p/w1280/{$this->movie->backdrop_path}" 
+                ? "https://image.tmdb.org/t/p/w1280/{$this->movie->backdrop_path}"
                 : null,
             'genres' => $this->movie->genres->pluck('name')->toArray(),
             'created_at' => $this->movie->created_at?->timestamp,

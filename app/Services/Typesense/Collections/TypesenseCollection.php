@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Typesense\Collections;
 
-use App\Services\Typesense\Data\TypesenseField;
-use App\Services\Typesense\Documents\TypesenseDocument;
-use App\Services\Typesense\TypesenseClient;
+use RuntimeException;
 use Illuminate\Support\LazyCollection;
+use App\Services\Typesense\TypesenseClient;
+use App\Services\Typesense\Documents\TypesenseDocument;
 
 /**
  * @template T of TypesenseDocument
@@ -21,28 +23,17 @@ abstract class TypesenseCollection
     abstract public function name(): string;
 
     /**
-     * Retrieve the typesense schema.
-     *
-     * @return list<TypesenseField>
+     * Return the typesense client.
      */
-    abstract public function schema(): array;
-
-    /**
-     * Create collection on the typesense server
-     * Override this method if you need to customize the collection creation process.
-     */
-    public function create(): void
+    final public static function client(): TypesenseClient
     {
-        $this->client()->collections->create([
-            'name' => $this->name(),
-            'fields' => $this->schema(),
-        ]);
+        return resolve(TypesenseClient::class);
     }
 
     /**
      * Retrieve the collection name.
      */
-    public function drop(): void
+    final public function drop(): void
     {
         $this->ensureCollectionExists();
         $this->client()->collections[$this->name()]->delete();
@@ -58,7 +49,7 @@ abstract class TypesenseCollection
             ->exists();
 
         if (! $exists) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf('Collection "%s" does not exist on the typesense server.', $this->name())
             );
         }
@@ -69,7 +60,7 @@ abstract class TypesenseCollection
      *
      * @param  LazyCollection<int,T>  $documents
      */
-    public function import(LazyCollection $documents): void
+    final public function import(LazyCollection $documents): void
     {
         $this->ensureCollectionExists();
         $client = $this->client();
@@ -88,20 +79,16 @@ abstract class TypesenseCollection
 
     /**
      * Retrieve the collection details.
+     *
+     * @return array<string,mixed>
+     *
+     * @throws RuntimeException
      */
-    public function getDetails(): array
+    final public function details(): array
     {
         $this->ensureCollectionExists();
         $collections = $this->client()->getCollections();
 
         return $collections[$this->name()]->retrieve();
-    }
-
-    /**
-     * Return the typesense client.
-     */
-    public static function client(): TypesenseClient
-    {
-        return resolve(TypesenseClient::class);
     }
 }

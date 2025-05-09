@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Typesense\Data;
 
-use App\Services\Typesense\Enums\FieldType;
 use App\Services\Typesense\Enums\Locale;
+use App\Services\Typesense\Enums\FieldType;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
@@ -25,6 +27,21 @@ final readonly class TypesenseField implements Arrayable
     ) {}
 
     /**
+     * Static soft-deleted field.
+     */
+    public static function softDeleted(): self
+    {
+        return new self(
+            name: 'deleted_at',
+            type: FieldType::INT32,
+            optional: true,
+            index: false,
+            facet: false,
+            sort: false,
+        );
+    }
+
+    /**
      * Convert the field to an array.
      */
     public function toArray(): array
@@ -40,20 +57,5 @@ final readonly class TypesenseField implements Arrayable
             'locale' => $this->locale->value,
             'symbols_to_index' => $this->symbolsToIndex,
         ];
-    }
-
-    /**
-     * Static soft-deleted field.
-     */
-    public static function softDeleted(): self
-    {
-        return new self(
-            name: 'deleted_at',
-            type: FieldType::INT32,
-            optional: true,
-            index: false,
-            facet: false,
-            sort: false,
-        );
     }
 }

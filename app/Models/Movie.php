@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -20,8 +22,17 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int,Genre> $genres
  */
-class Movie extends Model
+final class Movie extends Model
 {
+    /**
+     * List of genres associated with the movie.
+     *
+     * @return BelongsToMany<Genre,$this>
+     */
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(Genre::class);
+    }
     /**
      * Get the attributes that should be cast.
      *
@@ -33,13 +44,5 @@ class Movie extends Model
             'rating' => 'float',
             'release_date' => 'datetime',
         ];
-    }
-
-    /**
-     * List of genres associated with the movie.
-     */
-    public function genres(): BelongsToMany
-    {
-        return $this->belongsToMany(Genre::class);
     }
 }

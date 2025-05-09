@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Genre;
 use App\Models\Movie;
-use App\Services\Typesense\Collections\PopularMoviesCollection;
-use App\Services\Typesense\Documents\PopularMovieDocument;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
+use App\Services\Typesense\Documents\PopularMovieDocument;
+use App\Services\Typesense\Collections\PopularMoviesCollection;
 
 Artisan::command('typesense:import', function () {
     $collection = new PopularMoviesCollection;
@@ -32,7 +34,7 @@ Artisan::command('typesense:drop', function () {
 
 Artisan::command('typesense:info', function () {
     $collection = new PopularMoviesCollection;
-    dd($collection->getDetails());
+    dd($collection->details());
 });
 
 Artisan::command('import:tmdb', function () {

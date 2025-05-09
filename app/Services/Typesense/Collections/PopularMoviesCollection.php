@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Typesense\Collections;
 
 use App\Services\Typesense\Documents\PopularMovieDocument;
@@ -7,7 +9,7 @@ use App\Services\Typesense\Documents\PopularMovieDocument;
 /**
  * @extends TypesenseCollection<PopularMovieDocument>
  */
-class PopularMoviesCollection extends TypesenseCollection
+final class PopularMoviesCollection extends TypesenseCollection
 {
     /**
      * {@inheritDoc}
@@ -20,19 +22,11 @@ class PopularMoviesCollection extends TypesenseCollection
     /**
      * {@inheritDoc}
      */
-    public function schema(): array
-    {
-        return PopularMovieDocument::schema();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function create(): void
     {
         $this->client()->collections->create([
             'name' => $this->name(),
-            'fields' => $this->schema(),
+            'fields' => PopularMovieDocument::schema(),
             // 'enable_nested_fields' => true,
         ]);
     }

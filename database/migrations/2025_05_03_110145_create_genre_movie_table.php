@@ -21,12 +21,4 @@ return new class extends Migration
             $table->foreignIdFor(Movie::class);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('genre_movie');
-    }
 };
